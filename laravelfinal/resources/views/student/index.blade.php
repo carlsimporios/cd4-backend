@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            background-color: #155617;
             margin: 0;
             padding: 0;
         }
@@ -164,7 +164,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Actions</th>
+            <th>Edit</th>
         </tr>
 
         @foreach($students as $student)
@@ -172,14 +172,9 @@
                 <td>{{$student->id}}</td>
                 <td>{{$student->name}}</td>
                 <td>{{$student->email}}</td>
-                <td>
+                <td style="text-align:center; padding: 0px;">
                     <a href="{{url('student/edit',$student->id)}}">
                         <button class="edit-btn">Edit</button>
-                    </a>
-
-                    <a href="{{url('deleteStudent',$student->id)}}">
-                        <button class="delete-btn" onclick="return confirm('Are you sure to delete?');">Delete</button>
-
                     </a>
 
                 </td>

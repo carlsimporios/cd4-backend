@@ -7,78 +7,65 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
-    public function index(){
-        $students = Student::all();
-
-        return view('student.index', ['students' =>$students]);
-
-    }
-    public function create(){
-        return view('student.createStudent');
-
-    }
-
-    public function store(Request $request){
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-        ]);
-
-        Student::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-        ]);
-
-        return redirect('student/index')->with('success', 'Student added successfully!');
-    }
-    public function edit($id){
-        $student = Student::find($id);
-        if(!$student){
-
-            return redirect('student/index')->with('error', 'Student not found!');
-        }
-
-        return view('student.editStudent', [
-            'student' =>$student
-
-        ]);
-
-    }
-    public function update(Request $request, $id)
+    public function index()
     {
-
-        $student = Student::find($id);
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-        ]);
-
-
-        $student->update([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-        ]);
-
-
-        return redirect('student/index')->with('success', 'Student updated successfully!');
+        $students = Student::orderBy('id')->get();
+        return response()->json($students);
     }
 
-    public function delete($id){
-
-        $student = Student::find($id);
-
-        if(!$student){
-
-            return redirect('student/index')->with('error','Student not found!');
-
-        }
-
-        $student -> delete();
-
-        return redirect('student/index')->with('success', 'Student has deleted successfully!');
-
+    public function view(Student $student)
+    {
+        // $student->load('grade');
+        return response()->json($student);
     }
+
+    public function store(Request $request)
+{
+    $fields = $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:students,email',
+    ]);
+
+    $student = Student::create($fields);
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Student with ID#' . $student->id . ' has been created',
+    ]);
+}
+
+
+    public function update(Request $request, Student $student)
+{
+    $fields = $request->validate([
+        'name' => 'string',
+        'email' => 'string',
+    ]);
+
+    // Check if the new email is different from the existing one
+    if ($fields['email'] !== $student->email) {
+        // Validate the new email for uniqueness
+        $request->validate([
+            'email' => 'unique:students,email',
+        ]);
+    }
+
+    $student->update($fields);
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Student with ID# ' . $student->id . ' has been updated.',
+    ]);
+}
+
+public function destroy(Student $student) {
+    $details = $student->name.", ".$student->email;
+    $student->delete();
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'The dancer '. $details.  ' has been deleted.'
+    ]);
+}
 
 }

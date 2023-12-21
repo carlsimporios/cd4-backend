@@ -7,80 +7,59 @@ use App\Models\Course;
 
 class CourseController extends Controller
 {
-    public function index(){
-        $courses = Course::all();
-
-        return view('course.index', ['courses' =>$courses]);
-
-    }
-    public function create(){
-        return view('course.createCourse');
-
-    }
-    public function store(Request $request){
-
-        $validatedData = $request->validate([
-            'title' => 'required',
-
-        ]);
-
-        Course::create([
-            'title' => $validatedData['title'],
-
-        ]);
-
-        return redirect('course/index')->with('success', 'Course added successfully!');
+    public function index()
+    {
+        $courses = Course::orderBy('id')->get();
+        return response()->json($courses);
     }
 
-    public function edit($id){
-        $course = Course::find($id);
-        if(!$course){
-
-            return redirect('course/index')->with('error', 'Course not found!');
-        }
-
-        return view('course.editCourse', [
-            'course' =>$course
-
-        ]);
-
-    }
-
-
-    public function update(Request $request, $id)
+    public function view(Course $course)
     {
 
-        $course = Course::find($id);
-
-        $validatedData = $request->validate([
-            'title' => 'required|string',
-
-        ]);
-
-
-        $course->update([
-            'title' => $validatedData['title'],
-
-        ]);
-
-
-        return redirect('course/index')->with('success', 'Course updated successfully!');
-    }
-    public function delete($id){
-
-        $course = Course::find($id);
-
-        if(!$course){
-
-            return redirect('course/index')->with('error','Course not found!');
-
-        }
-
-        $course -> delete();
-
-        return redirect('course/index')->with('success', 'Course has deleted successfully!');
-
+        return response()->json($course);
     }
 
+    public function store(Request $request)
+{
+    $fields = $request->validate([
+        'title' => 'required',
+    ]);
+
+    $course = Course::create($fields);
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Course with ID#' . $course->id . ' has been created',
+    ]);
 }
 
+
+public function update(Request $request, Course $course)
+{
+    $fields = $request->validate([
+        'title' => 'string',
+    ]);
+
+    $course->update($fields);
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Course with ID# ' . $course->id . ' has been updated.',
+    ]);
+}
+
+public function destroy(Course $course)
+{
+    $details = $course->title;
+    $course->delete();
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'The course '. $details.  ' has been deleted.'
+    ]);
+}
+
+
+
+
+}

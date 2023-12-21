@@ -20,23 +20,31 @@
 
         form {
             background-color: #fff;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
         }
 
-        input {
+        input,
+        select {
             display: block;
             margin: 10px 0;
             padding: 10px;
-            width: 100%;
+            width: calc(100% - 20px);
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
         input[type="submit"] {
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         input[type="submit"]:hover {
@@ -49,21 +57,22 @@
         @csrf
         @method('POST')
 
-        <label for="student_id">Student:
+        <label for="student_id">Student:</label>
         <select name="student_id" id="student_id">
             @foreach ( $students as $student)
-           <option value="{{$student->id}}">{{$student->name}}</option>
+                <option value="{{$student->id}}">{{$student->name}}</option>
             @endforeach
         </select>
-         <br>
-        <label for="course_id">Course:
-            <select name="course_id" id="course_id">
-                @foreach ( $courses as $course)
-               <option value="{{$course->id}}">{{$course->title}}</option>
-                @endforeach
-        <label for="grade">Grade:
+
+        <label for="course_id">Course:</label>
+        <select name="course_id" id="course_id">
+            @foreach ( $courses as $course)
+                <option value="{{$course->id}}">{{$course->title}}</option>
+            @endforeach
+        </select>
+
+        <label for="grade">Grade:</label>
         <input type="text" name="grade" placeholder="Enter grade">
-    </label>
 
         <input type="submit" value="Submit">
     </form>

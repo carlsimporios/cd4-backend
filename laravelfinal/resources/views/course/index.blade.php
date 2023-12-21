@@ -164,7 +164,7 @@
         <tr>
             <th>ID</th>
             <th>Course</th>
-            <th>Actions</th>
+            <th>Edit</th>
 
         </tr>
 
@@ -172,15 +172,12 @@
             <tr>
                 <td>{{$course->id}}</td>
                 <td>{{$course->title}}</td>
-                <td>
+                <td style="text-align: center;">
                     <a href="{{url('course/edit',$course->id)}}">
                         <button class="edit-btn">Edit</button>
                     </a>
 
-                    <a href="{{url('deleteCourse',$course->id)}}">
-                        <button class="delete-btn" onclick="return confirm('Are you sure to delete?');">Delete</button>
 
-                    </a>
 
                 </td>
             </tr>

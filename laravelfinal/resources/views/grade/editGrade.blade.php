@@ -7,53 +7,75 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Edit Grade</h2>
+    <div class="container">
+        <h2>Edit Grade</h2>
 
-    <form method="post" action="{{ url('updateGrade', $grade->id) }}">
-        @csrf
-        @method('PATCH')
+        <form method="post" action="{{ url('updateGrade', $grade->id) }}">
+            @csrf
+            @method('PATCH')
 
-        <label for="student_id">Student:</label>
-        <select name="student_id" required>
-            @foreach($students as $student)
-                <option value="{{ $student->id }}" {{ $grade->student_id == $student->id ? 'selected' : '' }}>
-                    {{ $student->name }}
-                </option>
-            @endforeach
-        </select>
+            <label for="student_id">Student:</label>
+            <select name="student_id" required>
+                @foreach($students as $student)
+                    <option value="{{ $student->id }}" {{ $grade->student_id == $student->id ? 'selected' : '' }}>
+                        {{ $student->name }}
+                    </option>
+                @endforeach
+            </select>
 
-        <label for="course_id">Course:</label>
-        <select name="course_id" required>
-            @foreach($courses as $course)
-                <option value="{{ $course->id }}" {{ $grade->course_id == $course->id ? 'selected' : '' }}>
-                    {{ $course->title }}
-                </option>
-            @endforeach
-        </select>
+            <label for="course_id">Course:</label>
+            <select name="course_id" required>
+                @foreach($courses as $course)
+                    <option value="{{ $course->id }}" {{ $grade->course_id == $course->id ? 'selected' : '' }}>
+                        {{ $course->title }}
+                    </option>
+                @endforeach
+            </select>
 
-        <label for="grade">Grade:</label>
-        <input type="text" name="grade" value="{{ $grade->grade }}" required>
+            <label for="grade">Grade:</label>
+            <input type="text" name="grade" value="{{ $grade->grade }}" required>
 
-        <button type="submit">Update Grade</button>
-    </form>
+            <button type="submit" class="update-btn">Update Grade</button>
+        </form>
+        <a href="{{url('deleteGrade', $grade->id)}}" onclick="return confirm('Are you sure to delete?');">
+            <button class="delete-btn">Delete</button>
+        </a>
+    </div>
+
     <style>
-        /* public/css/style.css */
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #155617;
 }
 
 h2 {
     text-align: center;
     color: #333;
 }
+.container{
+    display: flex;
+            flex-direction: column; /* Set flex-direction to column for vertical alignment */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 8px;
+            background-color: #fff;
+            width: 1000px;
+            max-width: 600px;
+            text-align: center;
+
+
+}
 
 form {
-    width: 50%;
-    margin: 20px auto;
+    display: table-column;
+
 }
 
 label {
@@ -68,16 +90,28 @@ select, input {
     box-sizing: border-box;
 }
 
-button {
-    background-color: #4CAF50;
+.delete-btn {
+    width: 100%;
+    background-color: #ce1b1b;
     color: white;
     padding: 10px;
     border: none;
     cursor: pointer;
 }
+.update-btn{
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
 
-button:hover {
-    background-color: #45a049;
+}
+.delete-btn:hover {
+    background-color: #6e0b0b;
+}
+.update-btn:hover {
+    background-color: #003b14;
 }
 
     </style>

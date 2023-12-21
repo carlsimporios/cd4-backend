@@ -9,93 +9,108 @@ use App\Models\Grade;
 
 class GradeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        $grades = Grade::orderBy('id')->get();
+        return response()->json($grades);
+    }
 
-        $grades = Grade::all();
+    public function view(Grade $grade)
+    {
+        // Assuming you have a 'students' relationship in your Grade model
+        $grade->load('students');
 
+        return response()->json($grade);
+    }
 
-        return view('grade.index', [
-            'grades' => $grades,
+    public function store(Request $request)
+{
+    $fields = $request->validate([
+        'student_id' => 'required|exists:students,id',
+        'course_id' => 'required|exists:courses,id',
+        'grade' => 'required|numeric',
+    ], [
+        'student_id.required' => 'Student ID is required.',
+        'student_id.exists' => 'The selected student does not exist.',
+        'course_id.required' => 'Course ID is required.',
+        'course_id.exists' => 'The selected course does not exist.',
+        'grade.required' => 'Grade is required.',
+        'grade.numeric' => 'Grade must be a numeric value.',
     ]);
 
-    }
-    public function create(){
-        $students = Student::all();
-        $courses = Course::all();
-        return view('grade.createGrade', [
-            'students' => $students,
-            'courses' => $courses,
-        ]);
+    $grade = Grade::create($fields);
 
-    }
-
-    public function store(Request $request){
-
-        $validatedData = $request->validate([
-            'student_id' => 'required|string|max:255',
-            'course_id' => 'required|string|max:255',
-            'grade' => 'required|string|max:255',
-        ]);
-
-        Grade::create([
-            'student_id' => $validatedData['student_id'],
-            'course_id' => $validatedData['course_id'],
-            'grade' => $validatedData['grade'],
-        ]);
-
-        return redirect('grade/index')->with('success', 'Student added successfully!');
-    }
-    public function editGrade($id)
-    {
-        $grade = Grade::find($id);
-
-        if (!$grade) {
-            return redirect('grade/index')->with('error', 'Grade not found!');
-        }
-
-        $students = Student::all();
-        $courses = Course::all();
-
-        return view('grade.editGrade', [
-            'grade' => $grade,
-            'students' => $students,
-            'courses' => $courses,
-        ]);
-    }
-
-    public function updateGrade(Request $request, $id)
-    {
-        $grade = Grade::find($id);
-
-        if (!$grade) {
-            return redirect('grade/index')->with('error', 'Grade not found!');
-        }
-
-        $validatedData = $request->validate([
-            'student_id' => 'required|string|max:255',
-            'course_id' => 'required|string|max:255',
-            'grade' => 'required|string|max:255',
-        ]);
-
-        $grade->update([
-            'student_id' => $validatedData['student_id'],
-            'course_id' => $validatedData['course_id'],
-            'grade' => $validatedData['grade'],
-        ]);
-
-        return redirect('grade/index')->with('success', 'Grade updated successfully!');
-    }
-
-    public function deleteGrade($id)
-    {
-        $grade = Grade::find($id);
-
-        if (!$grade) {
-            return redirect('grade/index')->with('error', 'Grade not found!');
-        }
-
-        $grade->delete();
-
-        return redirect('grade/index')->with('success', 'Grade deleted successfully!');
-    }
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Grade with ID#' . $grade->id . ' has been created',
+    ]);
 }
+
+// public function update(Request $request, Grade $grade)
+// {
+//     if (!$grade) {
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Grade not found.',
+//         ], 404);
+//     }
+
+//     try {
+//         $fields = $request->validate([
+//             'student_id' => 'required|exists:students,id',
+//             'course_id' => 'required|exists:courses,id',
+//             'grade' => 'required|numeric',
+//         ]);
+
+//         $grade->update($fields);
+
+//         return response()->json([
+//             'status' => 'OK',
+//             'message' => 'Grade with ID# ' . $grade->id . ' has been updated.',
+//         ]);
+//     } catch (\Illuminate\Validation\ValidationException $e) {
+//         return response()->json([
+//             'status' => 'error',
+//             'message' => 'Validation failed',
+//             'errors' => $e->validator->errors(),
+//         ], 422);
+//     }
+
+    public function update(Request $request, Grade $grade)
+{
+    $fields = $request->validate([
+                    'student_id' => 'required|exists:students,id',
+                    'course_id' => 'required|exists:courses,id',
+                    'grade' => 'required|numeric',
+                ]);
+     $grade -> update($fields);
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Grade with ID# ' . $grade->id . ' has been updated.',
+    ]);
+}
+
+// Explicitly specify supported methods
+public static function methods()
+{
+    return ['PUT', 'PATCH'];
+}
+
+public function destroy(Grade $grade)
+{
+    $grade->delete();
+
+    return response()->json([
+        'status' => 'OK',
+        'message' => 'Event with ID# ' . $grade->id . ' has been deleted.'
+    ]);
+}
+
+}
+
+
+
+
+
+

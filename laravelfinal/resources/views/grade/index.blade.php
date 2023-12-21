@@ -169,7 +169,7 @@
             <th>Student</th>
             <th>Course</th>
             <th>Grade</th>
-            <th>Actions</th>
+            <th>Edit</th>
 
         </tr>
 
@@ -179,14 +179,12 @@
                 <td>{{$grade->student->name}}</td>
                 <td>{{$grade->course->title}}</td>
                 <td>{{$grade->grade}}</td>
-                <td>
+                <td style="text-align:center;">
                     <a href="{{url('editGrade', $grade->id)}}">
                         <button class="edit-btn">Edit</button>
                     </a>
 
-                    <a href="{{url('deleteGrade', $grade->id)}}" onclick="return confirm('Are you sure to delete?');">
-                        <button class="delete-btn">Delete</button>
-                    </a>
+
                 </td>
             </tr>
         @endforeach

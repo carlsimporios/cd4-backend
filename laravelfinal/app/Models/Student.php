@@ -17,4 +17,9 @@ class Student extends Model
         'name',
         'email',
     ];
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
+
 }
